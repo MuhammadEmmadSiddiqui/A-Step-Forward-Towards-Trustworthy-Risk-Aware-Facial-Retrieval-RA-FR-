@@ -1,208 +1,124 @@
 ---
-title: Academic Project Page Template
+title: "A Step Forward Towards Trustworthy Risk-Aware Facial Retrieval"
 authors:
-  - name: Roman Hauksson
-    url: https://roman.technology
-    institution: University of Texas at Dallas
-    notes: ["*", †]
-  - name: Author Two
-    institution: Institution Two
-    notes: ["*", †]
-  - name: Author Three
-    institution: Institution Three
-    notes: ["*"]
-  - name: Author Four
-    institution: Institution Four
-conference: Conference Name
-notes:
-  - symbol: "*"
-    text: author note one
-  - symbol: †
-    text: author note two
+  - name: Muhammad Emmad Siddiqui
+    url: https://github.com/MuhammadEmmadSiddiqui
+    institution: FAST NUCES
+  - name: Muhammad Rafi
+    url: https://scholar.google.com/citations?user=AIuzS3sAAAAJ&hl=en
+    institution: FAST NUCES
+conference: Accepted at ICPR 2026, Lyon, France
 links:
   - name: Paper
-    url: https://github.com/RomanHauksson/academic-project-astro-template
+    url: "#"
     icon: ri:file-pdf-2-line
   - name: Code
-    url: https://github.com/RomanHauksson/academic-project-astro-template
+    url: https://github.com/MuhammadEmmadSiddiqui/RA-FR
     icon: ri:github-line
-  - name: arXiv
-    url: https://github.com/RomanHauksson/academic-project-astro-template
-    icon: academicons:arxiv
-  - name: Slides
-    url: https://github.com/RomanHauksson/academic-project-astro-template
-    icon: ri:slideshow-2-line
 
-# The color theme of the page. Defaults to "device" (the preference set in the user's brower or operating system). Setting this to "light" or "dark" will override the user's preference. This is useful if your figures only look good in one theme.
-theme: device
-
-# This is the icon that appears in the user's browser tab. To customize, change the favicon.svg file in /public/, or add your own file to /public/ and change the filename here.
+theme: light
 favicon: favicon.svg
-
-# These keys are optional. If a link to your project page is in a Google search result, text message, or social media post, it will often appear as a "link preview card" based on its title, description, favicon, and thumbnail. After you publish your page, you can double check that these previews look right using [this tool](https://linkpreview.xyz/)
-description: Simple project page template for your research paper, built with Astro and Tailwind
-thumbnail: screenshot-light.png
+description: "RA-FR: A trustworthy risk-aware facial retrieval framework integrating uncertainty quantification with face retrieval via Bayesian Transfer Learning and Monte Carlo Dropout."
 ---
 
-import Video from "./components/Video.astro";
 import HighlightedSection from "./components/HighlightedSection.astro";
 import SmallCaps from "./components/SmallCaps.astro";
 import Figure from "./components/Figure.astro";
 import Picture from "./components/Picture.astro";
-import ModelViewer from "./components/ModelViewer.astro"
 import TwoColumns from "./components/TwoColumns.astro";
-import YouTubeVideo from "./components/YouTubeVideo.astro";
-import Carousel from "./components/Carousel.astro";
-import CarouselSlide from "./components/CarouselSlide.astro";
 import Wide from "./components/Wide.astro";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/starwind/tabs";
-import { Comparison } from "./components/Comparison.tsx";
 
-import outside from "./assets/outside.mp4";
-import dogsDiffc from "./assets/dogs-diffc.png"
-import dogsTrue from "./assets/dogs-true.png"
-import dogsMsillm from "@/assets/dogs-msillm.jpg"
-
-<Video src={outside} />
+import calibrationPlot from "./assets/RA-FR (1).png";
+import resultsFigure from "./assets/RA-FR (2).png";
 
 <HighlightedSection>
 
 ## Abstract
 
-This is a template you can use to create a professional project page for your research paper. [See the code for the template and instructions on how to use it yourself on GitHub](https://github.com/RomanHauksson/academic-project-astro-template). It's made with the [Astro web framework](https://astro.build/) and styled with [Tailwind](https://tailwindcss.com/). You write the content in [MDX](https://mdxjs.com/), which enables markdown formatting like **bold**, _italics_, and ~strikethrough~, as well as custom components like <SmallCaps>small caps.</SmallCaps>
+Modern face retrieval systems achieve high accuracy but often lack the ability to communicate *when their predictions are unreliable*. This work introduces **RA-FR** (Risk-Aware Facial Retrieval), a framework that integrates uncertainty quantification directly into the face retrieval pipeline—enabling the system to flag uncertain retrievals rather than silently returning wrong matches. We investigate two complementary uncertainty estimation strategies, **Bayesian Transfer Learning (BTL)** and **Monte Carlo Dropout (MCD)**, across three architectures of increasing capacity: a ResNet-50 baseline with Generalized Mean Pooling (**R50-GeM**), and two proposed Vision Transformer variants pre-trained with DINO, **ViTB-DN-GeM** and **ViTB-DN-GGeM** (Group GeM). Experiments are conducted on the **IMFDB** (Indian Movie Face Database) in-domain benchmark and the challenging **SCFace** (Surveillance Cameras Face) cross-domain benchmark, where models trained on IMFDB are evaluated on low-resolution surveillance imagery. We assess calibration quality through Expected Calibration Error (ECE) and reliability diagrams, and show that the proposed ViT-based architectures yield substantially better-calibrated uncertainty estimates that align retrieval confidence with actual retrieval performance.
 
 </HighlightedSection>
 
-## Visuals
+## Motivation
 
-### Picture
+Face retrieval is increasingly deployed in security, surveillance, and identity verification. Yet most systems treat every prediction with equal confidence, making them vulnerable in safety-critical settings. A single high-confidence but incorrect match can have severe consequences. **RA-FR** addresses this gap by making the retrieval system *risk-aware*—quantifying and communicating uncertainty so that downstream decision-makers can act accordingly.
 
-Use the `Picture` component to display images. If you have a figure in PDF format, you can pass in its path as the `src` prop and it will be converted into a web-friendly image automatically.
+## Method
 
-<Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
+### Model Architectures
 
-### Wide visual
+We evaluate three architectures that pair a visual backbone with a pooling strategy suited to retrieval:
 
-I constrained the maximum width of the text column to make sure it's readable even when the screen is wide. But images and other visuals should "break out" and take up more horizontal space: for this, try wrapping them in the `Wide` component.
+| Architecture | Backbone | Pooling | Role |
+| :--- | :---: | :---: | :---: |
+| R50-GeM | ResNet-50 | Generalized Mean (GeM) | Baseline |
+| ViTB-DN-GeM | ViT-Base + DINO | GeM | Proposed |
+| ViTB-DN-GGeM | ViT-Base + DINO | Group GeM | Proposed (Main) |
+
+The **DINO**-pretrained ViT-Base backbone provides strong spatial representations learned through self-supervised distillation. **Group GeM** extends standard GeM by applying generalized mean pooling across groups of feature channels, capturing richer multi-scale information for retrieval.
+
+### Uncertainty Estimation
+
+We employ two complementary uncertainty estimation approaches:
+
+- **Bayesian Transfer Learning (BTL):** Places a Bayesian last layer on top of the frozen or fine-tuned feature extractor, enabling closed-form posterior inference over retrieval scores without costly MCMC sampling.
+- **Monte Carlo Dropout (MCD):** Activates dropout at test time and performs $T$ stochastic forward passes. The variance across the resulting embedding distributions serves as the uncertainty estimate: $\sigma^2 = \frac{1}{T} \sum_{t=1}^{T} \| f_t(x) - \bar{f}(x) \|^2$
+
+### Risk-Aware Retrieval Pipeline
+
+The RA-FR pipeline augments standard retrieval with an uncertainty-driven decision layer:
+
+1. **Embed** the query face using the trained backbone + pooling.
+2. **Retrieve** nearest neighbors from the gallery via cosine similarity.
+3. **Estimate uncertainty** of the retrieval using BTL or MCD.
+4. **Flag** retrievals whose uncertainty exceeds a calibrated threshold, enabling operators to request manual verification instead of trusting an unreliable match.
+
+## Results
+
+### Calibration & Uncertainty Analysis
+
+The figure below shows reliability diagrams (Recall@1 vs. binned uncertainty) and uncertainty density distributions across both datasets. A well-calibrated model should track the diagonal (dashed line)—indicating that stated confidence aligns with actual retrieval accuracy.
 
 <Wide>
-  <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
+  <Figure>
+    <Picture slot="figure" src={calibrationPlot} alt="Reliability diagrams and uncertainty density distributions for BTL and MCD on IMFDB and SCFace datasets, comparing ViTB-DN-GGeM, ViTB-DN-GeM, and R50-GeM architectures." />
+    <Fragment slot="caption">**Calibration analysis.** Top row: reliability diagrams (Recall@1 vs. uncertainty) with ECE values. Bottom row: uncertainty density distributions. Columns compare BTL and MCD on IMFDB (left) and SCFace (right). The proposed ViT-based models achieve lower ECE and better-calibrated uncertainty, particularly the ViTB-DN-GeM variant.</Fragment>
+  </Figure>
 </Wide>
 
-### Figure with caption
+Key findings from the calibration analysis:
 
-Wrap a visual in a `Figure` component to add a caption.
+- **ViTB-DN-GeM achieves the best calibration** on IMFDB with BTL (ECE = 0.245) and MCD (ECE = 0.059), closely tracking the ideal diagonal.
+- **R50-GeM struggles on SCFace**, where ECE degrades to 0.485 (BTL) and 0.482 (MCD), reflecting poor generalization to surveillance conditions.
+- **MCD produces tighter uncertainty distributions** compared to BTL, especially for the ViT-based architectures.
+- The proposed architectures exhibit **higher density at lower uncertainty values** on IMFDB, indicating more confident and better-calibrated in-domain retrieval.
 
-<Figure>
-  <Picture slot="figure" src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
-  <Fragment slot="caption">A photo of two dogs running side-by-side in shallow water, lossily compressed using the [DiffC algorithm](https://jeremyiv.github.io/diffc-project-page/).</Fragment>
-</Figure>
+### Cross-Domain Generalization
 
-### Comparison slider
+<Wide>
+  <Figure>
+    <Picture slot="figure" src={resultsFigure} alt="Additional results showing cross-domain evaluation and retrieval performance comparison between architectures on IMFDB and SCFace." />
+    <Fragment slot="caption">**Cross-domain evaluation.** Performance comparison of the three architectures across IMFDB (in-domain) and SCFace (cross-domain) settings, demonstrating the robustness of the proposed ViT-based models under domain shift from movie scenes to surveillance imagery.</Fragment>
+  </Figure>
+</Wide>
 
-Use the `Comparison` component to compare two visuals with an interactive slider.
+The cross-domain evaluation from IMFDB → SCFace simulates a realistic deployment scenario, where training data comes from controlled movie scenes but the system must handle low-resolution surveillance footage. The proposed ViT-based architectures demonstrate substantially stronger generalization, maintaining both retrieval accuracy and calibration quality under this challenging domain shift.
 
-<Comparison client:idle >
-  <Picture slot="itemOne" src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
-  <Picture slot="itemTwo" src={dogsTrue} alt="True photo of two dogs running side-by-side in shallow water" />
-</Comparison>
+## Key Takeaways
 
-### Tab panels
+- **Uncertainty matters for trust.** Integrating uncertainty quantification into face retrieval transforms a black-box system into one that can communicate reliability, which is essential for safety-critical applications.
+- **ViT + DINO features excel at calibration.** Self-supervised ViT representations produce better-calibrated uncertainty estimates than supervised ResNet features, especially under domain shift.
+- **MCD and BTL are complementary.** MCD tends to produce tighter, better-separated uncertainty distributions, while BTL provides computationally cheaper estimates with competitive calibration.
+- **Group GeM improves retrieval capacity.** The ViTB-DN-GGeM architecture achieves the strongest raw retrieval performance, extending the standard GeM with group-wise pooling over ViT features.
 
-Tab panels are a great way to display a labeled collection of related visuals without taking up too much space.
-
-<Tabs defaultValue="true">
-  <TabsList>
-    <TabsTrigger value="true">Ground truth</TabsTrigger>
-    <TabsTrigger value="diffc">DiffC (Flux-dev)</TabsTrigger>
-    <TabsTrigger value="msillm">MS-ILLM</TabsTrigger>
-  </TabsList>
-  <TabsContent value="true">
-    <Picture
-      src={dogsTrue}
-      alt="True photo of two dogs running side-by-side in shallow water"
-    />
-  </TabsContent>
-  <TabsContent value="diffc">
-    <Picture
-      src={dogsDiffc}
-      alt="Photo of two running dogs, lossily compressed using the DiffC algorithm"
-    />
-  </TabsContent>
-  <TabsContent value="msillm">
-    <Picture
-      src={dogsMsillm}
-      alt="Photo of two running dogs, lossily compressed using MS-ILLM"
-    />
-  </TabsContent>
-</Tabs>
-
-### Carousel
-
-A carousel is another useful pattern for a collection of visuals that don't necessarily have meaningful labels.
-
-<Carousel>
-  <CarouselSlide>
-    <Picture src={dogsTrue} alt="True photo of two dogs running side-by-side in shallow water" />
-  </CarouselSlide>
-  <CarouselSlide>
-    <Picture src={dogsDiffc} alt="Photo of two running dogs, lossily compressed using the DiffC algorithm" />
-  </CarouselSlide>
-  <CarouselSlide>
-    <Picture
-      src={dogsMsillm}
-      alt="Photo of two running dogs, lossily compressed using MS-ILLM"
-    />
-  </CarouselSlide>
-</Carousel>
-
-## Two columns
-
-Use the two columns component to display two columns of content. In this example, the first column contains a YouTube video embed and the second column contains an interactive 3D model viewer. By default, they display side by side, but if the screen is narrow enough (for example, on mobile), they're arranged vertically.
-
-<TwoColumns>
-  <YouTubeVideo slot="left" videoId="wjZofJX0v4M" />
-  <ModelViewer slot="right" src="/BoxVertexColors.glb" alt="A cube colored with a rainbow gradient" />
-</TwoColumns>
-
-## $\LaTeX$
-
-You can also add $\LaTeX$ formulas, rendered during the build process using [$\KaTeX$](https://katex.org/) so they're quick to load for visitors of your project page. You can write them inline, like this: $a^2 + b^2 = c^2$. Or, you can write them as a block:
-
-$$
-\int_a^b f(x) dx
-$$
-
-## Citation
-
-If you copy your bibliography into `./bibliography.bib`, you can cite papers using their BibTeX keys, and they'll be automatically formatted and included in the bibliography section at the end. For example: [@vaswani2017attention]. Note that these citations are distinct from footnotes[^mynote], which show up in a separate section if you use them.
-
-[^mynote]: On the web, they should really be called "endnotes", since each page constitutes a full document.
-
-## Table
-
-Add simple tables using [GitHub Flavored Markdown syntax](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables):
-
-| Model | Accuracy | F1 score | Training time (hours) |
-| :--- | :---: | :---: | :---: |
-| BERT-base | 0.89 | 0.87 | 4.5 |
-| RoBERTa-large | 0.92 | 0.91 | 7.2 |
-| DistilBERT | 0.86 | 0.84 | 2.1 |
-| XLNet | 0.90 | 0.89 | 6.8 |
-
-## BibTeX citation
-
-Displaying the BibTeX entry for your paper in a code block makes it easy to copy and paste.
+## BibTeX Citation
 
 ```bibtex
-@misc{roman2024academic,
-  author = "{Roman Hauksson}",
-  title = "Academic Project Page Template",
-  year = "2024",
-  howpublished = "\url{https://research-template.roman.technology}",
+@misc{siddiqui2025rafr,
+  author    = {Siddiqui, Muhammad Emmad and Rafi, Muhammad},
+  title     = {A Step Forward Towards Trustworthy Risk-Aware Facial Retrieval},
+  year      = {2025},
+  publisher = {GitHub},
+  howpublished = {\url{https://github.com/MuhammadEmmadSiddiqui/RA-FR}},
 }
 ```
-
-## Bibliography
-
-[^ref]
