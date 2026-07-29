@@ -10,7 +10,7 @@ authors:
 conference: Accepted at ICPR 2026, Lyon, France
 links:
   - name: Paper
-    url: "#"
+    url: "https://arxiv.org/pdf/2607.16279"
     icon: ri:file-pdf-2-line
   - name: Code
     url: https://github.com/MuhammadEmmadSiddiqui/RA-FR
@@ -35,13 +35,13 @@ import resultsFigure from "./assets/RA-FR (2).png";
 
 ## Abstract
 
-Facial image retrieval in unconstrained surveillance environments is a high-stakes challenge where missing a subject of interest—a single false negative—is simply not an option. Despite near-perfect performance on curated benchmarks, current recognition systems falter under real-world domain shifts such as low resolution, motion blur, and uncontrolled illumination (e.g., SCFace). Addressing this reliability gap, we propose **Risk-Aware Facial Retrieval (RA-FR)**, a framework that moves beyond fixed Top-$k$ retrieval to adaptive set generation, guaranteeing ground truth inclusion within a user-specified risk level ($\alpha$) and confidence level ($1-\delta$). Our approach integrates three core contributions: (1) reducing aleatoric uncertainty via a hybrid blind face restoration technique coupling Latent Consistency Models (InterLCM) and DiffBIR; (2) extracting discriminative, restoration-robust features via self-supervised DINOv1 ViT-B with GGeM pooling; and (3) employing conformal prediction with Hoeffding's inequality to dynamically calibrate retrieval set sizes based on query uncertainty. On the IMFDB benchmark, it consistently satisfies a **5\% risk target** with an average retrieval set size of approximately **10 images**. By unifying domain-specific restoration, robust representation learning, and provable decision rules, RA-FR offers a pipeline that makes facial retrieval in surveillance both reliable and auditable.
+Facial image retrieval in unconstrained surveillance environments is a high-stakes challenge where missing a subject of interest—a single false negative—is simply not an option. Despite near-p[...]
 
 </HighlightedSection>
 
 ## Motivation
 
-Face retrieval is increasingly deployed in security, surveillance, and identity verification. Yet most systems treat every prediction with equal confidence, making them vulnerable in safety-critical settings. A single high-confidence but incorrect match can have severe consequences. **RA-FR** addresses this gap by making the retrieval system *risk-aware*, quantifying and communicating uncertainty so that downstream decision-makers can act accordingly.
+Face retrieval is increasingly deployed in security, surveillance, and identity verification. Yet most systems treat every prediction with equal confidence, making them vulnerable in safety-critic[...]
 
 ## Method
 
@@ -55,14 +55,14 @@ We evaluate three architectures that pair a visual backbone with a pooling strat
 | ViTB-DN-GeM | ViT-Base + DINO | GeM | Proposed |
 | ViTB-DN-GGeM | ViT-Base + DINO | Group GeM | Proposed (Main) |
 
-The **DINO**-pretrained ViT-Base backbone provides strong spatial representations learned through self-supervised distillation. **Group GeM** extends standard GeM by applying generalized mean pooling across groups of feature channels, capturing richer multi-scale information for retrieval.
+The **DINO**-pretrained ViT-Base backbone provides strong spatial representations learned through self-supervised distillation. **Group GeM** extends standard GeM by applying generalized mean pool[...]
 
 ### Uncertainty Estimation
 
 We employ two complementary uncertainty estimation approaches:
 
-- **Bayesian Transfer Learning (BTL):** Places a Bayesian last layer on top of the frozen or fine-tuned feature extractor, enabling closed-form posterior inference over retrieval scores without costly MCMC sampling.
-- **Monte Carlo Dropout (MCD):** Activates dropout at test time and performs $T$ stochastic forward passes. The variance across the resulting embedding distributions serves as the uncertainty estimate: $\sigma^2 = \frac{1}{T} \sum_{t=1}^{T} \| f_t(x) - \bar{f}(x) \|^2$
+- **Bayesian Transfer Learning (BTL):** Places a Bayesian last layer on top of the frozen or fine-tuned feature extractor, enabling closed-form posterior inference over retrieval scores without co[...]
+- **Monte Carlo Dropout (MCD):** Activates dropout at test time and performs $T$ stochastic forward passes. The variance across the resulting embedding distributions serves as the uncertainty esti[...]
 
 ### Risk-Aware Retrieval Pipeline
 
@@ -77,12 +77,12 @@ The RA-FR pipeline augments standard retrieval with an uncertainty-driven decisi
 
 ### Calibration & Uncertainty Analysis
 
-The figure below shows reliability diagrams (Recall@1 vs. binned uncertainty) and uncertainty density distributions across both datasets. A well-calibrated model should track the diagonal (dashed line)—indicating that stated confidence aligns with actual retrieval accuracy.
+The figure below shows reliability diagrams (Recall@1 vs. binned uncertainty) and uncertainty density distributions across both datasets. A well-calibrated model should track the diagonal (dashed [...]
 
 <Wide>
   <Figure>
-    <Picture slot="figure" src={calibrationPlot} alt="Reliability diagrams and uncertainty density distributions for BTL and MCD on IMFDB and SCFace datasets, comparing ViTB-DN-GGeM, ViTB-DN-GeM, and R50-GeM architectures." />
-    <Fragment slot="caption">**Calibration analysis.** Top row: reliability diagrams (Recall@1 vs. uncertainty) with ECE values. Bottom row: uncertainty density distributions. Columns compare BTL and MCD on IMFDB (left) and SCFace (right). The proposed ViT-based models achieve lower ECE and better-calibrated uncertainty, particularly the ViTB-DN-GeM variant.</Fragment>
+    <Picture slot="figure" src={calibrationPlot} alt="Reliability diagrams and uncertainty density distributions for BTL and MCD on IMFDB and SCFace datasets, comparing ViTB-DN-GGeM, ViTB-DN-GeM, [...]
+    <Fragment slot="caption">**Calibration analysis.** Top row: reliability diagrams (Recall@1 vs. uncertainty) with ECE values. Bottom row: uncertainty density distributions. Columns compare BTL [...]
   </Figure>
 </Wide>
 
@@ -98,15 +98,15 @@ Key findings from the calibration analysis:
 <Wide>
   <Figure>
     <Picture slot="figure" src={resultsFigure} alt="Additional results showing cross-domain evaluation and retrieval performance comparison between architectures on IMFDB and SCFace." />
-    <Fragment slot="caption">**Cross-domain evaluation.** Performance comparison of the three architectures across IMFDB (in-domain) and SCFace (cross-domain) settings, demonstrating the robustness of the proposed ViT-based models under domain shift from movie scenes to surveillance imagery.</Fragment>
+    <Fragment slot="caption">**Cross-domain evaluation.** Performance comparison of the three architectures across IMFDB (in-domain) and SCFace (cross-domain) settings, demonstrating the robustne[...]
   </Figure>
 </Wide>
 
-The cross-domain evaluation from IMFDB → SCFace simulates a realistic deployment scenario, where training data comes from controlled movie scenes but the system must handle low-resolution surveillance footage. The proposed ViT-based architectures demonstrate substantially stronger generalization, maintaining both retrieval accuracy and calibration quality under this challenging domain shift.
+The cross-domain evaluation from IMFDB → SCFace simulates a realistic deployment scenario, where training data comes from controlled movie scenes but the system must handle low-resolution surve[...]
 
 ## Key Takeaways
 
-- **Uncertainty matters for trust.** Integrating uncertainty quantification into face retrieval transforms a black-box system into one that can communicate reliability, which is essential for safety-critical applications.
+- **Uncertainty matters for trust.** Integrating uncertainty quantification into face retrieval transforms a black-box system into one that can communicate reliability, which is essential for saf[...]
 - **ViT + DINO features excel at calibration.** Self-supervised ViT representations produce better-calibrated uncertainty estimates than supervised ResNet features, especially under domain shift.
 - **MCD and BTL are complementary.** MCD tends to produce tighter, better-separated uncertainty distributions, while BTL provides computationally cheaper estimates with competitive calibration.
 - **Group GeM improves retrieval capacity.** The ViTB-DN-GGeM architecture achieves the strongest raw retrieval performance, extending the standard GeM with group-wise pooling over ViT features.
